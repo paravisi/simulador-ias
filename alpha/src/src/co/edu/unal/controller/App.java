@@ -118,7 +118,7 @@ public class App {
 	private App() {
 		m_mframe = new MainFrame();
 		app_memory = new Memory(40, memory_length);
-		setActiveBase(octal);
+		setActiveBase(binary);
 		initializeBasicRegisters();
 
 	}
