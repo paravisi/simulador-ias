@@ -29,7 +29,7 @@ public class App {
 		basicRegisters.put("AC", new Register(40));
 		basicRegisters.put("MQ", new Register(40));
 		basicRegisters.put("PC", new Register(10, false));
-		basicRegisters.put("IR", new Register(20, false));
+		basicRegisters.put("IR", new Register(8, false));
 		basicRegisters.put("IBR", new Register(20, false));
 	}
 
@@ -118,6 +118,7 @@ public class App {
 					new InstructionExecuter() {
 						@Override
 						public boolean Execute(Address x) {
+
 
 							App.getInstance().getBasicRegisters().get("AC").Write(new Data(Math.abs(App.getInstance().getApp_memory().Read(x).value()))
 									);
@@ -268,7 +269,7 @@ public class App {
 		private App() {
 		m_mframe = new MainFrame();
 		app_memory = new Memory(40, memory_length);
-		setActiveBase(binary);
+		setActiveBase(hexa);
 		initializeBasicRegisters();
 
 	}
@@ -279,25 +280,7 @@ public class App {
 
 	public static void main(String[] args) {
 		App.getInstance().run();
-		App.getInstance().getApp_memory().Write(
-				new Address(new Data(new Long("0")), 20, 39),
-				new Data("09002", hexa));
-		App.getInstance().getApp_memory().Write(
-				new Address(new Data(new Long("2")), App.getInstance()
-						.getApp_memory().getReg_size()), new Data("159", hexa));
-		App.getInstance().getApp_memory().Write(
-				new Address(new Data(new Long("1")), 20, 39),
-				new Data("0B002", hexa));
-		App.getInstance().getInstructionSet().get(1).Exec(
-				new Address(new Data(new Long("0")), App.getInstance()
-						.getApp_memory().getReg_size()));
-		App.getInstance().getInstructionSet().get(2).Exec(
-				new Address(new Data(new Long("1")), App.getInstance()
-						.getApp_memory().getReg_size()));
-		System.out.println(App.getInstance().getBasicRegisters().get("MQ")
-				.Read().value());
-		System.out.println(App.getInstance().getBasicRegisters().get("AC")
-				.Read().value());
+
 	}
 
 	public void run() {
@@ -365,7 +348,7 @@ public class App {
 	private static App m_this;
 	private MainFrame m_mframe;
 	private Memory app_memory;
-	private int memory_length = 4;
+	private int memory_length = 121;
 	private ArrayList<Instruction> instructionSet = new ArrayList<Instruction>();
 	private Map<String, Register> basicRegisters = new HashMap<String, Register>();
 	private int actual_base;
