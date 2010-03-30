@@ -41,9 +41,12 @@ public class Instruction {
 		else
 			return false;
 	}
-
+	public Data getCodop() {
+		return codop;
+	}
 	private InstructionExecuter executer;
 	private InstructionSyntaxInformation syntax;
 	private Data codop;
+
 
 }

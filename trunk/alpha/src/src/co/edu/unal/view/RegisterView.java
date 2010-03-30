@@ -2,14 +2,13 @@ package src.co.edu.unal.view;
 
 import java.awt.Color;
 
-import javax.swing.JFormattedTextField;
-import javax.swing.text.MaskFormatter;
+import javax.swing.JTextField;
 
 import src.co.edu.unal.controller.App;
 import src.co.edu.unal.model.Register;
 import src.co.edu.unal.model.RegisterListener;
 
-public class RegisterView extends JFormattedTextField implements
+public class RegisterView extends JTextField implements
 		RegisterListener {
 
 	/**
@@ -21,7 +20,9 @@ public class RegisterView extends JFormattedTextField implements
 	public RegisterView(Register model) {
 		super();
 		owner = model;
-		String mask = "";
+		super.setDocument(new RegisterDocument());
+		addFocusListener(owner);
+		/*String mask = "";
 		for (int i = 0; i < ((int) Math.ceil(owner.getBits_size()
 				/ (Math.log(App.getInstance().getActiveBase().getBase()) / Math
 						.log(2)))); i++)
@@ -42,14 +43,14 @@ public class RegisterView extends JFormattedTextField implements
 				.transformValue(owner.Read().value()));
 		owner.addListener(this);
 		setFocusLostBehavior(COMMIT_OR_REVERT);
-
+	*/
 	}
 
 	@Override
 	public void processRegisterEvent(RegisterEvent e)
 			throws InterruptedException {
 		if (e == RegisterEvent.WRITE) {
-			this.setValue(App.getInstance().getActiveBase().getTransformer()
+			this.setText(App.getInstance().getActiveBase().getTransformer()
 					.transformValue(owner.Read().value()));
 			Color oldColor = this.getBackground();
 			this.setBackground(Color.YELLOW);
@@ -64,6 +65,10 @@ public class RegisterView extends JFormattedTextField implements
 			this.setBackground(oldColor);
 		}
 	}
+	
+
+	
+	
 
 	private Register owner;
 }
