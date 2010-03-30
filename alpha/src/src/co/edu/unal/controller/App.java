@@ -34,7 +34,7 @@ public class App {
 	}
 
 	private void initializeInstructionSet() {
-		instructionSet.add(new Instruction(new Data("A", hexa),
+		instructionSet.add(new Instruction(new Data("1", hexa),
 				new InstructionSyntaxInformation("LOAD M", "\\)", "LOAD M(X)"),
 				new InstructionExecuter() {
 					@Override
@@ -87,6 +87,28 @@ public class App {
 								x,
 								App.getInstance().getBasicRegisters().get("AC")
 										.Read());
+						return true;
+					}
+				}));
+		instructionSet.add(new Instruction(new Data("A", hexa),
+				new InstructionSyntaxInformation("LOAD MQ"),
+				new InstructionExecuter() {
+
+					@Override
+					public boolean Execute(Address x) {
+
+						App.getInstance().getBasicRegisters().get("AC").Write(App.getInstance().getBasicRegisters().get("MQ").Read());
+						return true;
+					}
+				}));
+		instructionSet.add(new Instruction(new Data("2", hexa),
+				new InstructionSyntaxInformation("LOAD -M","//)","LOAD -M(x)"),
+				new InstructionExecuter() {
+
+					@Override
+					public boolean Execute(Address x) {
+
+						App.getInstance().getBasicRegisters().get("AC").Write(new Data(App.getInstance().getApp_memory().Read(x).value()*(-1)));
 						return true;
 					}
 				}));

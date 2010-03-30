@@ -10,15 +10,24 @@ public class InstructionSyntaxInformation {
 		Fpatron = c_patronFinal;
 		this.predictor=predictor;
 	}
+	public InstructionSyntaxInformation(String c_spatronInicio) {
+		Ipatron = c_spatronInicio;
+		this.predictor=c_spatronInicio;
+	}
 
 	public String getPredictor() {
 		return predictor;
 	}
 
 	public boolean matchPattern(String s) {
-		if (s.matches(Ipatron+"\\(("+App.getInstance().getActiveBase().getRegex()+"{"+App.getInstance().getMemoryAddresWritingWidth()+"})"+Fpatron))
+		if ((!Fpatron.isEmpty()) && s.matches(Ipatron+"\\(("+App.getInstance().getActiveBase().getRegex()+"{"+App.getInstance().getMemoryAddresWritingWidth()+"})"+Fpatron))
 			return true;
+		if (Fpatron.isEmpty() && s.matches(Ipatron)){
+			return true;
+		}
+			
 		return false;
+
 	}
 
 	private String Ipatron,Fpatron;
