@@ -80,8 +80,7 @@ public class Register {
 	}
 
 	public void Write(Data data) {
-		notifyListeners(RegisterEvent.WRITE);
-		contained.value(data);
+		Write(data, 0, data.Binary().length());
 	}
 
 	public void Write(Data data, int x) {
@@ -112,7 +111,7 @@ public class Register {
 			if (x == 0 && y == bits_size) {
 				contained.setPositive(data.isPositive());
 			}
-			Write(new Data(nreg, App.getBinary()));
+			contained.value(new Data(nreg, App.getBinary()));
 			notifyListeners(RegisterEvent.WRITE);
 		}
 	}
