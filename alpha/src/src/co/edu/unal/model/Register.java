@@ -1,12 +1,14 @@
 package src.co.edu.unal.model;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 import src.co.edu.unal.controller.App;
 import src.co.edu.unal.model.RegisterListener.RegisterEvent;
 import src.co.edu.unal.view.RegisterView;
 
-public class Register {
+public class Register implements FocusListener{
 
 	public Register(int size) {
 		this(size, true);
@@ -168,13 +170,22 @@ public class Register {
 	public void setG_view(RegisterView gView) {
 		g_view = gView;
 	}
+	private RegisterView g_view;
+	@Override
+	public void focusGained(FocusEvent e) {
+		
+	}
 
+	@Override
+	public void focusLost(FocusEvent e) {
+		Write(new Data(g_view.getText(),App.getInstance().getActiveBase()));
+	}
 	private Data contained;
 	private int bits_size;
 
 	private boolean signed;
 	// list of listeners
 	private ArrayList<RegisterListener> m_listeners;
-	private RegisterView g_view;
+
 
 }

@@ -13,6 +13,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import src.co.edu.unal.controller.App;
+import src.co.edu.unal.model.Register;
+
 public class MainFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
@@ -31,6 +34,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	public void init() {
 		setDefaultSize();
+		for (Register reg : App.getInstance().getApp_memory().getRegisters()) {
+			this.addComp(reg.getG_view());
+		}
 //		instruc = new InstructionSyntaxTextField(App.getInstance()
 //				.getInstrucionSyntaxInfoList());
 //		instruc.setFont(new Font("Arial", Font.BOLD, 15));
@@ -38,7 +44,6 @@ public class MainFrame extends JFrame implements ActionListener {
 //        checkPanel.add(instruc,BorderLayout.WEST);
 //        checkPanel.add(b,BorderLayout.EAST);
 		
-//
         add(checkPanel, BorderLayout.CENTER);
 		
 	}
