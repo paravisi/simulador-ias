@@ -52,14 +52,14 @@ public class Data {
 			sign=-1;
 			number = (String) number.subSequence(1, number.length());
 		}
-		int base10=0;
+		long base10=new Long(0);
 		int posTranslate;
 		for (int i=number.length()-1,j=0;i>=0;i--,j++){
 			for (posTranslate=0;posTranslate<translate.length;posTranslate++){
 				if (number.charAt(i)==translate[posTranslate])
 					break;
 			}
-			base10+=posTranslate*Math.pow(base,j);
+			base10=base10+(long)(posTranslate*Math.pow(base,j));
 		}
 		return new Long(base10*sign);
 	}
