@@ -22,6 +22,8 @@ public class RegisterView extends JTextField implements
 		owner = model;
 		super.setDocument(new RegisterDocument());
 		addFocusListener(owner);
+		owner.addListener(this);
+		setOpaque(true);
 		/*String mask = "";
 		for (int i = 0; i < ((int) Math.ceil(owner.getBits_size()
 				/ (Math.log(App.getInstance().getActiveBase().getBase()) / Math
@@ -41,7 +43,7 @@ public class RegisterView extends JTextField implements
 		}
 		this.setValue(App.getInstance().getActiveBase().getTransformer()
 				.transformValue(owner.Read().value()));
-		owner.addListener(this);
+		
 		setFocusLostBehavior(COMMIT_OR_REVERT);
 	*/
 	}
@@ -54,14 +56,14 @@ public class RegisterView extends JTextField implements
 					.transformValue(owner.Read().value()));
 			Color oldColor = this.getBackground();
 			this.setBackground(Color.YELLOW);
-			Thread.sleep(100);
+			//TODO: Mejorar el retraso  - Thread.sleep(200);
 			this.setBackground(oldColor);
 
 		}
 		if (e == RegisterEvent.READ) {
 			Color oldColor = this.getBackground();
 			this.setBackground(Color.GREEN);
-			Thread.sleep(200);
+			//TODO: Mejorar el retraso  - Thread.sleep(200);
 			this.setBackground(oldColor);
 		}
 	}

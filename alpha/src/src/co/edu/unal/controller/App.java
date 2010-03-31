@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JFrame;
+
 import src.co.edu.unal.model.Address;
 import src.co.edu.unal.model.Base;
 import src.co.edu.unal.model.BaseTransform;
@@ -227,10 +229,12 @@ public class App {
 							return true;
 						}
 					}));
+			//TODO: Hacer JUMP M(X,20:39) y JUMP +M(x,20:39)
 			instructionSet.add(new Instruction(new Data("F", hexa),
 					new InstructionSyntaxInformation("JUMP+ M", "\\,0:19)", "JUMP M(X,0:19)"),
 					new InstructionExecuter() {
 						@Override
+						
 						public boolean Execute(Address x) {
 
 							if(App.getInstance().getBasicRegisters().get("AC").Read().value()>=0){
@@ -285,12 +289,10 @@ public class App {
 
 	public void run() {
 		initializeInstructionSet();
-		for (Register reg : app_memory.getRegisters()) {
-			m_mframe.addComp(reg.getG_view());
-		}
 		m_mframe.init();
 		m_mframe.setTitle("IAS Simulator");
 		m_mframe.setExtendedState(Frame.MAXIMIZED_BOTH);
+		m_mframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		m_mframe.setVisible(true);
 
 	}

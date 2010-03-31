@@ -2,19 +2,20 @@ package src.co.edu.unal.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 
-import src.co.edu.unal.controller.App;
-import src.co.edu.unal.model.Register;
+import src.co.edu.unal.controller.action.ExecuteAll;
 
 public class MainFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -29,14 +30,23 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		//setBounds((ss.width - DEF_WIDTH) / 2, (ss.height - DEF_HEIGHT) / 2,
 		//		DEF_WIDTH, DEF_HEIGHT);
-		setBounds(new Rectangle(0, 0, 450, 80));
+		setBounds(new Rectangle(0, 0, 1000, 800));
 	}
 
 	public void init() {
 		setDefaultSize();
-		for (Register reg : App.getInstance().getApp_memory().getRegisters()) {
-			this.addComp(reg.getG_view());
-		}
+		MemoryView memView= new MemoryView();
+		JScrollPane scrolledMemory = new JScrollPane(memView);
+	
+		add(scrolledMemory);
+		
+		JButton exec = new JButton(new ExecuteAll());
+		add(exec, BorderLayout.EAST);
+		add(new BasicRegisterView(), BorderLayout.SOUTH);
+
+		
+
+		
 //		instruc = new InstructionSyntaxTextField(App.getInstance()
 //				.getInstrucionSyntaxInfoList());
 //		instruc.setFont(new Font("Arial", Font.BOLD, 15));
@@ -44,7 +54,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //        checkPanel.add(instruc,BorderLayout.WEST);
 //        checkPanel.add(b,BorderLayout.EAST);
 		
-        add(checkPanel, BorderLayout.CENTER);
+        
 		
 	}
 	

@@ -16,7 +16,7 @@ public class Executer {
 		Map <String,Register> BasicReg= App.getInstance().getBasicRegisters();
 		Memory memory = App.getInstance().getApp_memory();
 		Address instructionMemoryAddress;
-		if (BasicReg.get("IBR").Read().value()!=0){
+		if (BasicReg.get("IBR").Read().value()!=0){// En el caso en el que el IBR tenga algo 
 			BasicReg.get("IR").Write(BasicReg.get("IBR").Read(0,7)); // Guardar en IR los primeros 8 bits del IBR, es decir el codop de la instrucción
 			instructionMemoryAddress = new Address(BasicReg.get("IBR").Read(8,19),40); // Guardar en MAR lo que esta en IBR de 8 a 19, es decir la posición de memoria sobre la que actua la instrucción 
 			BasicReg.get("PC").Write(new Data(BasicReg.get("PC").Read().value()+1)); // Incrmentar PC
@@ -48,7 +48,7 @@ public class Executer {
 	}
 	private static boolean executeIR(Address MAR){
 		for (Instruction model : App.getInstance().getInstructionSet()){
-			if (model.getCodop().value()==App.getInstance().getBasicRegisters().get("IR").Read().value()){
+			if (model.getCodop().value().intValue()==App.getInstance().getBasicRegisters().get("IR").Read().value().intValue()){
 				model.Exec(MAR);
 				return true;
 			}

@@ -20,19 +20,14 @@ public class Instruction {
 		return syntax;
 	}
 
-	public boolean Exec(Address instruction) {
-		if (executer.Execute((getAddr(instruction))))
+	public boolean Exec(Address MAR) {
+		if (executer.Execute((MAR)))
 			return true;
 		else
 			return false;
 	}
 
-	private Address getAddr(Address instruction) {
-		Register instruc = new Register(App.getInstance().getApp_memory().Read(
-				instruction).value(), 20, false);
-		return new Address(instruc.Read(9, 19), App.getInstance()
-				.getApp_memory().getReg_size());
-	}
+
 
 	public boolean codopCorrespondece(Address instruction) {
 		if (App.getInstance().getApp_memory().Read(instruction).value() == codop

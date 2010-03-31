@@ -82,7 +82,7 @@ public class Register implements FocusListener{
 	}
 
 	public void Write(Data data) {
-		Write(data, 0, data.Binary().length());
+		Write(data, 0, bits_size-1);
 	}
 
 	public void Write(Data data, int x) {
@@ -94,7 +94,7 @@ public class Register implements FocusListener{
 
 		reg = (contained.value() < 0) ? "1" : "0";
 
-		for (int i = 1; i < bits_size; i++)
+		for (int i = 0; i < bits_size; i++)
 			reg += "0";
 
 		reg = reg.substring(0, ((bits_size - 1) - contained.Binary().length()))
@@ -103,7 +103,7 @@ public class Register implements FocusListener{
 		for (int i = 0; i <= ((y - x) - data.Binary().length()); i++)
 			inserting = "0" + inserting;
 
-		if (data.Binary().length() <= (y - x) && x < bits_size && y < bits_size) {
+		if (data.Binary().length()-1 <= (y - x) && x < bits_size && y < bits_size) {
 
 			if (x < y) {
 				nreg = reg.substring(0, x) + inserting;
@@ -116,7 +116,7 @@ public class Register implements FocusListener{
 			contained.value(new Data(nreg, App.getBinary()));
 			notifyListeners(RegisterEvent.WRITE);
 		}
-	}
+ 	}
 
 	private void setSize(int size) {
 		this.bits_size = size;
