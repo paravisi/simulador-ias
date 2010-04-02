@@ -11,6 +11,7 @@ public class InstructionSyntaxInformation {
 		this.predictor=predictor;
 	}
 	public InstructionSyntaxInformation(String c_spatronInicio) {
+		Fpatron ="";
 		Ipatron = c_spatronInicio;
 		this.predictor=c_spatronInicio;
 	}
@@ -20,7 +21,7 @@ public class InstructionSyntaxInformation {
 	}
 
 	public boolean matchPattern(String s) {
-		if ((!Fpatron.isEmpty()) && s.matches(Ipatron+"\\(("+App.getInstance().getActiveBase().getRegex()+"{"+App.getInstance().getMemoryAddresWritingWidth()+"})"+Fpatron))
+		if ((!Fpatron.isEmpty()) && s.matches(Ipatron+"\\(("+App.getInstance().getActiveBase().getRegex()+"{1,"+App.getInstance().getMemoryAddresWritingWidth()+"})"+Fpatron))
 			return true;
 		if (Fpatron.isEmpty() && s.matches(Ipatron)){
 			return true;

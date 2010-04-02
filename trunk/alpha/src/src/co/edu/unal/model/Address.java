@@ -35,6 +35,7 @@ public class Address {
 		if (ending>=0)
 			this.ending = ending;
 	}
+	
 	private Data direction;
 	private int beginning;
 	private int ending;

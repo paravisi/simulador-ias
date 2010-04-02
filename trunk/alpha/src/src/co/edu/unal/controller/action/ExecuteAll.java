@@ -30,7 +30,8 @@ public class ExecuteAll extends AbstractAction {
 		do{
 			follow=Executer.Execute();
 		}while(follow);
-		System.out.println("Fin de PlayAll");
+		App.getInstance().setPCinitiated(false);
+		
 
 	}
 	private static final String BASE = "src/co/edu/unal/view/resources/";
