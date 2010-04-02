@@ -10,8 +10,14 @@ package src.co.edu.unal.model;
  * */
 public class Data {
 	public Data(Long data){
-		m_data=data;
-		isPositive=(m_data<0)?false:true;
+		if (data<0){
+			m_data=data*(-1);
+			setPositive(false);
+		}else{
+			m_data=data;
+			setPositive(true);
+		}
+			
 
 	}
 	public Data(String data, Base base){
@@ -21,14 +27,24 @@ public class Data {
 				(data.matches("-{0,1}([0-7]{1,})") && base.getBase() ==8)||
 				(data.matches("-{0,1}([0-1]{1,})") && base.getBase() ==2))
 			m_data=fromBase(data, base.getBase());
-		isPositive=(m_data<0)?false:true;
-		//else throw exception ---
+		//TODO:else throw exception ---
+		if (m_data<0){
+			m_data=m_data*(-1);
+			setPositive(false);
+		}
+		else{
+			setPositive(true);
+		}
+		
 	}
 	public Data(){
 		this(new Long("0"));
 	}
 	public Long value(){
-		return m_data;
+		if (isPositive())
+			return m_data;
+		else
+			return m_data*(-1);
 	}
 
 	public boolean isPositive() {
@@ -38,16 +54,20 @@ public class Data {
 		this.isPositive = isPositive;
 	}
 	public void value(Data d){
-		m_data=d.value();
+		setPositive(d.isPositive());
+		if (d.isPositive())
+			m_data=d.value();
+		else
+			m_data=d.value()*(-1);
+		
 	}
 	public String Binary(){
-//		if (m_data<0)
-//			return "-" + Integer.toBinaryString((m_data*(-1)));
+		
 		return Long.toBinaryString(m_data);
 	}
 
 	public static Long fromBase(String number,int base){
-		int sign = 1;
+		int sign=1;
 		if (number.matches("-{1}.*")){
 			sign=-1;
 			number = (String) number.subSequence(1, number.length());

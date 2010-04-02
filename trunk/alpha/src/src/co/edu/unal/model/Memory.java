@@ -10,11 +10,24 @@ public class Memory {
 		for (int i=0;i<memory_size;i++)
 			registers.add(new Register(register_size));
 	}
-
-	public Data Read(Address adr){
-		return Read(adr.getDirection(), adr.getBeginning(), adr.getEnding());
+	
+	public void init(){
+		for (Register reg : registers){
+			reg.Write(new Data());
+		}
 	}
 
+	public Data Read(Address adr){
+		return registers.get(adr.getDirection().value().intValue()).Read();
+	}
+	public Data Read(Address adr,boolean IASEvent){
+		return registers.get(adr.getDirection().value().intValue()).Read(IASEvent);
+	}
+	public Data Read(Data position, int x, int y,boolean IASEvent) {
+		if (position.isPositive())
+			return registers.get(position.value().intValue()).Read(x, y,IASEvent);
+		return null;
+	}
 	public Data Read(Data position, int x, int y) {
 		if (position.isPositive())
 			return registers.get(position.value().intValue()).Read(x, y);
@@ -22,12 +35,19 @@ public class Memory {
 	}
 
 	public void Write(Address position, Data data) {
-			Write(position.getDirection(),data,position.getBeginning(),position.getEnding());
+		registers.get(position.getDirection().value().intValue()).Write(data);
+	}
+	public void Write(Address position, Data data,boolean IASEvent) {
+		registers.get(position.getDirection().value().intValue()).Write(data,IASEvent);
 	}
 
 	public void Write(Data position, Data data, int x, int y) {
 		if (position.isPositive())
 			registers.get(position.value().intValue()).Write(data, x, y);
+	}
+	public void Write(Data position, Data data, int x, int y,boolean IASEvent) {
+		if (position.isPositive())
+			registers.get(position.value().intValue()).Write(data, x, y,IASEvent);
 	}
 	
 	public int getReg_size() {

@@ -18,8 +18,9 @@ import javax.swing.JTextArea;
 
 import src.co.edu.unal.controller.action.CompileAll;
 import src.co.edu.unal.controller.action.ExecuteAll;
+import src.co.edu.unal.controller.action.ExecuteOne;
+import src.co.edu.unal.controller.action.InitMemoryAndRegisters;
 import src.co.edu.unal.controller.action.VerifyDocumentSyntax;
-import src.co.edu.unal.model.CodeDocument;
 
 public class MainFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -38,23 +39,32 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	public void init() {
+		
+		
 		setDefaultSize();
 		JTextArea code = new JTextArea(100,50);
 		code.setDocument(new CodeDocument(code));
 		
 		MemoryView memView= new MemoryView();
 		JScrollPane scrolledMemory = new JScrollPane(memView);
+
 		JSplitPane memAndRegs =  new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrolledMemory, new BasicRegisterView());
+	
 		memAndRegs.setDividerLocation(700);
 		
 		JPanel buttons = new JPanel();
 		JButton exec = new JButton(new ExecuteAll());
+		JButton execOne = new JButton(new ExecuteOne());
 		JButton syntax = new JButton(new VerifyDocumentSyntax(code));
 		JButton compiler = new JButton(new CompileAll(code));
+		JButton initMem = new JButton(new InitMemoryAndRegisters());
 		
+		buttons.add(initMem);
 		buttons.add(syntax);
 		buttons.add(compiler);
+		buttons.add(execOne);
 		buttons.add(exec);
+		
 		
 		
 		code.setBorder(new LineNumberedBorder(LineNumberedBorder.LEFT_JUSTIFY, LineNumberedBorder.RIGHT_SIDE));

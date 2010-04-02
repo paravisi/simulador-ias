@@ -2,6 +2,8 @@ package src.co.edu.unal.model;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
+import src.co.edu.unal.controller.BaseTransform;
+
 public class Base {
 	public BaseTransform getTransformer() {
 		return transformer;

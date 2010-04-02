@@ -44,9 +44,11 @@ public class Compiler {
 				e.printStackTrace();
 			}
 		}
-		if (App.getInstance().isPCinitiated()) {// Una vez compilados todos los
-												// Statements, el PC debe estar
-												// iniciado
+		if (!App.getInstance().isPCinitiated()) {// Una vez compilados todos los Statements, el PC debe estar iniciado
+			Data newPCValue = new Data(App.getInstance().getHigherAddressWithData().getDirection().value()+1);
+			App.getInstance().getBasicRegisters().get("PC").Write(newPCValue);
+			App.getInstance().setPCinitiated(true);
+		}
 			Address addressToWriteIn = new Address(App.getInstance().getBasicRegisters().get("PC").Read(), 0,19);
 			String firstInstructionString ="";
 			Instruction firstInstruction=null;
@@ -92,7 +94,8 @@ public class Compiler {
 				addressToWriteIn.setEnding(39);
 				firstInstruction.compile(addressToWriteIn, firstInstructionString);
 			}
-		}
+		
+		App.getInstance().getBasicRegisters().get("IBR").Write(new Data(new Long(0)));
 		return true;
 	}
 	
