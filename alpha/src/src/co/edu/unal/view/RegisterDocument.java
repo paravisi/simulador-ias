@@ -7,6 +7,7 @@ import javax.swing.text.PlainDocument;
 import src.co.edu.unal.controller.App;
 
 public class RegisterDocument extends PlainDocument {
+	//TODO: Añadir soporte de ingreso de números negativos
 	@Override
 	public void replace(int i, int j, String s, AttributeSet attributeset)
 			throws BadLocationException {

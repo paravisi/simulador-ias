@@ -1,6 +1,7 @@
 package src.co.edu.unal.view;
 
 import java.awt.Color;
+import java.awt.Graphics;
 
 import javax.swing.JTextField;
 
@@ -23,51 +24,56 @@ public class RegisterView extends JTextField implements
 		super.setDocument(new RegisterDocument());
 		addFocusListener(owner);
 		owner.addListener(this);
-		setOpaque(true);
-		/*String mask = "";
-		for (int i = 0; i < ((int) Math.ceil(owner.getBits_size()
-				/ (Math.log(App.getInstance().getActiveBase().getBase()) / Math
-						.log(2)))); i++)
-			mask += "#";
-
-		try {
-			MaskFormatter formatter = new MaskFormatter();
-			formatter.setValidCharacters(new String(App.getInstance()
-					.getActiveBase().getValidCharset()));
-			formatter.setAllowsInvalid(false);
-			formatter.setInvalidCharacters(null);
-			formatter.install(this);
-		} catch (Exception e) {
-			System.out
-					.println("Problemas durante la declaración de un MaskFormatter de Registros");
-		}
-		this.setValue(App.getInstance().getActiveBase().getTransformer()
-				.transformValue(owner.Read().value()));
-		
-		setFocusLostBehavior(COMMIT_OR_REVERT);
-	*/
+	
 	}
 
 	@Override
 	public void processRegisterEvent(RegisterEvent e)
 			throws InterruptedException {
-		if (e == RegisterEvent.WRITE) {
+		if (e == RegisterEvent.WRITE || e == RegisterEvent.IASWRITE) {
 			this.setText(App.getInstance().getActiveBase().getTransformer()
-					.transformValue(owner.Read().value()));
-			Color oldColor = this.getBackground();
-			this.setBackground(Color.YELLOW);
-			//TODO: Mejorar el retraso  - Thread.sleep(200);
-			this.setBackground(oldColor);
-
+					.transformValue(owner.Read(0,owner.getBits_size()-1).value()));
 		}
-		if (e == RegisterEvent.READ) {
+		if (e == RegisterEvent.IASREAD) {
 			Color oldColor = this.getBackground();
 			this.setBackground(Color.GREEN);
+			this.paintComponent(this.getGraphics());
+			Thread.sleep(App.getInstance().getInstructionsTimeDelay());
 			//TODO: Mejorar el retraso  - Thread.sleep(200);
 			this.setBackground(oldColor);
+			this.paintComponent(this.getGraphics());
+		}
+		if (e== RegisterEvent.IASWRITE){
+			Color oldColor = this.getBackground();
+			this.setBackground(Color.YELLOW);
+			paintComponent(this.getGraphics());
+			Thread.sleep(App.getInstance().getInstructionsTimeDelay());
+			//TODO: Mejorar el retraso  - Thread.sleep(200);
+			this.setBackground(oldColor);
+			paintComponent(this.getGraphics());
+
 		}
 	}
 	
+
+    // Since we're always going to fill our entire
+    // bounds, allow Swing to optimize painting of us
+	@Override
+    public boolean isOpaque() {
+        return false;
+    }
+	
+    protected void paintComponent(Graphics g) {
+    	int width = getWidth()-3;
+        int height = getHeight()-3;
+
+        // Paint a rounded rectangle in the background.
+        g.setColor(getBackground());
+        g.fillRect(1, 1, width, height);
+
+        // Now call the superclass behavior to paint the foreground.
+        super.paintComponent(g);
+    }
 
 	
 	

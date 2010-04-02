@@ -29,20 +29,28 @@ public class Instruction {
 			return false;
 	}
 
-	public void compile(Address addressToWriteIn, String instruction){
-		App.getInstance().getApp_memory().Write(new Address(addressToWriteIn.getDirection(),addressToWriteIn.getBeginning(),addressToWriteIn.getBeginning()+7),
-				codop);//Escribir en los primeros 8 bits de la dirección en la que se esta escribiendo la instrucción, el codop de la instrucción
-		App.getInstance().getApp_memory().Write(new Address(addressToWriteIn.getDirection(),addressToWriteIn.getBeginning()+8,addressToWriteIn.getEnding()),
-				 this.compiler.compile(instruction)); //Escribir en los restantes bits (los últimos 12 de la dirección que se proporciona al método) la dirección obtenida por el compiler de la instrucción
-				
-	}
+	public void compile(Address addressToWriteIn, String instruction) {
+		App.getInstance().getApp_memory().Write(
+				addressToWriteIn.getDirection(), codop,
+				addressToWriteIn.getBeginning(),
+				addressToWriteIn.getBeginning() + 7);// Escribir en los primeros
+														// 8 bits de la
+														// dirección en la que
+														// se esta escribiendo
+														// la instrucción, el
+														// codop de la
+														// instrucción
+		App.getInstance().getApp_memory().Write(
+				addressToWriteIn.getDirection(),
+				this.compiler.compile(instruction),
+				addressToWriteIn.getBeginning() + 8,
+				addressToWriteIn.getEnding()); // Escribir en los restantes bits
+												// (los últimos 12 de la
+												// dirección que se proporciona
+												// al método) la dirección
+												// obtenida por el compiler de
+												// la instrucción
 
-	public boolean codopCorrespondece(Address instruction) {
-		if (App.getInstance().getApp_memory().Read(instruction).value() == codop
-				.value())
-			return true;
-		else
-			return false;
 	}
 
 	public Data getCodop() {

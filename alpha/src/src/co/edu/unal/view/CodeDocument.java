@@ -1,4 +1,4 @@
-package src.co.edu.unal.model;
+package src.co.edu.unal.view;
 
 import javax.swing.JTextArea;
 import javax.swing.text.AttributeSet;
@@ -30,7 +30,6 @@ public class CodeDocument extends PlainDocument {
 			int lineLength = (owner.getLineEndOffset(owner.getLineOfOffset(owner.getCaretPosition())) - owner.getLineStartOffset(owner.getLineOfOffset(owner.getCaretPosition())));
 			String s1 = getText(lineStart, lineLength);
 			String s2 = SyntaxVerifier.getMatch(s1 + s);
-			App.getInstance().getM_mframe().setTitle(s1 + s + " - " + s2);
 			int j = (i + s.length()) - 1;
 			if (isStrict && s2 == null) {
 				s2 = SyntaxVerifier.getMatch(s1);
