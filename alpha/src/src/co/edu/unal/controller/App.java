@@ -3,7 +3,6 @@ package src.co.edu.unal.controller;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -14,6 +13,8 @@ import src.co.edu.unal.model.BaseTransform;
 import src.co.edu.unal.model.Data;
 import src.co.edu.unal.model.Memory;
 import src.co.edu.unal.model.Register;
+import src.co.edu.unal.model.Statement;
+import src.co.edu.unal.model.StatementSyntax;
 import src.co.edu.unal.model.instructions.Instruction;
 import src.co.edu.unal.model.instructions.InstructionSyntaxInformation;
 import src.co.edu.unal.view.MainFrame;
@@ -26,6 +27,41 @@ public class App {
 
 		return m_this;
 	}
+	
+	private void initializeBasicStatements(){
+		basicStatements.add(new Statement(new StatementSyntax() {
+			
+			@Override
+			public boolean match(String s) {
+				return s.matches("INIT ("+App.getInstance().getActiveBase().getRegex()+"{1,"+App.getInstance().getMemoryAddresWritingWidth()+"}) ("+App.getInstance().getActiveBase().getRegex()+"{1,"+App.getInstance().getMemoryRegisterWritingWidth()+"})");
+			}
+		},new StatementCompiler() {
+			
+			@Override
+			public void compile(String statement) {
+				String[] arguments = statement.split(" ");
+				Address position = new Address (new Data(arguments[1],App.getInstance().getActiveBase()),40);
+				Data initValue = new Data(arguments[2],App.getInstance().getActiveBase());
+				App.getInstance().getApp_memory().Write(position, initValue);		
+			}
+		},"INIT X VALUE"));
+basicStatements.add(new Statement(new StatementSyntax() {
+			
+			@Override
+			public boolean match(String s) {
+				return s.matches("ORG ("+App.getInstance().getActiveBase().getRegex()+"{1,"+App.getInstance().getMemoryAddresWritingWidth()+"})");
+			}
+		},new StatementCompiler() {
+			
+			@Override
+			public void compile(String statement) {
+				String[] arguments = statement.split(" ");
+				Data initPCValue = new Data(arguments[1],App.getInstance().getActiveBase());
+				App.getInstance().getBasicRegisters().get("PC").Write(initPCValue);
+				App.getInstance().setPCinitiated(true);
+			}
+		}, "ORG X"));
+	}
 
 	private void initializeBasicRegisters() {
 		basicRegisters.put("AC", new Register(40));
@@ -36,6 +72,32 @@ public class App {
 	}
 
 	private void initializeInstructionSet() {
+		InstructionCompiler oneCompleteMemoryAddres= new InstructionCompiler() {
+			
+			@Override
+			public Data compile(String instruction) {
+				int start=instruction.indexOf("(")+1;
+				int end=instruction.indexOf(")");
+				return new Data(instruction.substring(start, end),App.getInstance().getActiveBase());
+			}
+		};
+		InstructionCompiler oneHalfMemoryAddress = new InstructionCompiler() {
+			
+			@Override
+			public Data compile(String instruction) {
+				int start=instruction.indexOf("(")-1;
+				int end=instruction.indexOf(",");
+				return new Data(instruction.substring(start, end),App.getInstance().getActiveBase());
+			}
+		};
+		InstructionCompiler noMemoryAddress = new InstructionCompiler() {
+			
+			@Override
+			public Data compile(String instruction) {
+				return new Data("0",App.getBinary());
+			}
+		};
+		
 		instructionSet.add(new Instruction(new Data("1", hexa),
 				new InstructionSyntaxInformation("LOAD M", "\\)", "LOAD M(X)"),
 				new InstructionExecuter() {
@@ -46,7 +108,7 @@ public class App {
 								App.getInstance().getApp_memory().Read(x));
 						return true;
 					}
-				}));
+				},oneCompleteMemoryAddres));
 		instructionSet.add(new Instruction(new Data("9", hexa),
 				new InstructionSyntaxInformation("LOAD MQ,M", "\\)",
 						"LOAD MQ,M(X)"), new InstructionExecuter() {
@@ -58,7 +120,7 @@ public class App {
 								App.getInstance().getApp_memory().Read(x));
 						return true;
 					}
-				}));
+				},oneCompleteMemoryAddres));
 		instructionSet.add(new Instruction(new Data("B", hexa),
 				new InstructionSyntaxInformation("MUL M", "\\)", "MUL M(X)"),
 				new InstructionExecuter() {
@@ -77,7 +139,7 @@ public class App {
 								Multiplication.Read(40, 79));
 						return true;
 					}
-				}));
+				},oneCompleteMemoryAddres));
 		instructionSet.add(new Instruction(new Data("21", hexa),
 				new InstructionSyntaxInformation("STOR M", "\\)", "STOR M(X)"),
 				new InstructionExecuter() {
@@ -91,7 +153,7 @@ public class App {
 										.Read());
 						return true;
 					}
-				}));
+				},oneCompleteMemoryAddres));
 		instructionSet.add(new Instruction(new Data("A", hexa),
 				new InstructionSyntaxInformation("LOAD MQ"),
 				new InstructionExecuter() {
@@ -102,9 +164,9 @@ public class App {
 						App.getInstance().getBasicRegisters().get("AC").Write(App.getInstance().getBasicRegisters().get("MQ").Read());
 						return true;
 					}
-				}));
+				},oneCompleteMemoryAddres));
 		instructionSet.add(new Instruction(new Data("2", hexa),
-				new InstructionSyntaxInformation("LOAD -M","//)","LOAD -M(x)"),
+				new InstructionSyntaxInformation("LOAD -M","\\)","LOAD -M(x)"),
 				new InstructionExecuter() {
 
 					@Override
@@ -113,7 +175,7 @@ public class App {
 						App.getInstance().getBasicRegisters().get("AC").Write(new Data(App.getInstance().getApp_memory().Read(x).value()*(-1)));
 						return true;
 					}
-				}));
+				},oneCompleteMemoryAddres));
 		
 			instructionSet.add(new Instruction(new Data("3", hexa),
 					new InstructionSyntaxInformation("LOAD \\|M", "\\)\\|", "LOAD |M(X)|"),
@@ -126,7 +188,7 @@ public class App {
 									);
 							return true;
 						}
-					}));
+					},oneCompleteMemoryAddres));
 			instructionSet.add(new Instruction(new Data("4", hexa),
 					new InstructionSyntaxInformation("LOAD -\\|M", "\\)\\|", "LOAD -|M(X)|"),
 					new InstructionExecuter() {
@@ -137,7 +199,7 @@ public class App {
 									);
 							return true;
 						}
-					}));
+					},oneCompleteMemoryAddres));
 			instructionSet.add(new Instruction(new Data("5", hexa),
 					new InstructionSyntaxInformation("ADD M", "\\)", "ADD M(X)"),
 					new InstructionExecuter() {
@@ -148,7 +210,7 @@ public class App {
 									App.getInstance().getApp_memory().Read(x).value()+App.getInstance().getBasicRegisters().get("AC").Read().value()));
 							return true;
 						}
-					}));
+					},oneCompleteMemoryAddres));
 			instructionSet.add(new Instruction(new Data("7", hexa),
 					new InstructionSyntaxInformation("ADD \\|M", "\\)\\|", "ADD |M(X)|"),
 					new InstructionExecuter() {
@@ -159,7 +221,7 @@ public class App {
 									Math.abs(App.getInstance().getApp_memory().Read(x).value())+App.getInstance().getBasicRegisters().get("AC").Read().value()));
 							return true;
 						}
-					}));
+					},oneCompleteMemoryAddres));
 			instructionSet.add(new Instruction(new Data("6", hexa),
 					new InstructionSyntaxInformation("SUB M", "\\)", "SUB M(X)"),
 					new InstructionExecuter() {
@@ -170,7 +232,7 @@ public class App {
 									App.getInstance().getApp_memory().Read(x).value()-App.getInstance().getBasicRegisters().get("AC").Read().value()));
 							return true;
 						}
-					}));
+					},oneCompleteMemoryAddres));
 			instructionSet.add(new Instruction(new Data("8", hexa),
 					new InstructionSyntaxInformation("SUB \\|M", "\\)\\|", "SUB |M(X)|"),
 					new InstructionExecuter() {
@@ -181,7 +243,7 @@ public class App {
 									Math.abs(App.getInstance().getApp_memory().Read(x).value())-App.getInstance().getBasicRegisters().get("AC").Read().value()));
 							return true;
 						}
-					}));
+					},oneCompleteMemoryAddres));
 			instructionSet.add(new Instruction(new Data("C", hexa),
 					new InstructionSyntaxInformation("DIV M", "\\)", "DIV M(X)"),
 					new InstructionExecuter() {
@@ -194,7 +256,7 @@ public class App {
 									App.getInstance().getBasicRegisters().get("AC").Read().value()%App.getInstance().getApp_memory().Read(x).value()));
 							return true;
 						}
-					}));
+					},oneCompleteMemoryAddres));
 			instructionSet.add(new Instruction(new Data("14", hexa),
 					new InstructionSyntaxInformation("LSH "),
 					new InstructionExecuter() {
@@ -205,7 +267,7 @@ public class App {
 									App.getInstance().getApp_memory().Read(x).value()*(2)));
 							return true;
 						}
-					}));
+					},noMemoryAddress));
 			instructionSet.add(new Instruction(new Data("15", hexa),
 					new InstructionSyntaxInformation("RSH "),
 					new InstructionExecuter() {
@@ -216,9 +278,9 @@ public class App {
 									App.getInstance().getApp_memory().Read(x).value()/(2)));
 							return true;
 						}
-					}));
+					},noMemoryAddress));
 			instructionSet.add(new Instruction(new Data("D", hexa),
-					new InstructionSyntaxInformation("JUMP M", "\\,0:19)", "JUMP M(X,0:19)"),
+					new InstructionSyntaxInformation("JUMP M", ",0:19\\)", "JUMP M(X,0:19)"),
 					new InstructionExecuter() {
 						@Override
 						public boolean Execute(Address x) {
@@ -228,10 +290,48 @@ public class App {
 							App.getInstance().getBasicRegisters().get("IBR").Write(new Data(new Long("0")));
 							return true;
 						}
-					}));
-			//TODO: Hacer JUMP M(X,20:39) y JUMP +M(x,20:39)
+					},oneHalfMemoryAddress));
+			
+			instructionSet.add(new Instruction(new Data("10", hexa),
+					new InstructionSyntaxInformation("JUMP\\+ M", ",20:39\\)", "JUMP M(X,20:39)"),
+					new InstructionExecuter() {
+						@Override
+						
+						public boolean Execute(Address x) {
+
+							if(App.getInstance().getBasicRegisters().get("AC").Read().value()>=0){
+							
+							App.getInstance().getBasicRegisters().get("PC").Write(x.getDirection()
+									);
+							x.setBeginning(20);
+							x.setEnding(39);
+							App.getInstance().getBasicRegisters().get("IBR").Write(App.getInstance().getApp_memory().Read(x));}
+							return true;
+						}
+					},oneHalfMemoryAddress));
+			
+			instructionSet.add(new Instruction(new Data("E", hexa),
+					new InstructionSyntaxInformation("JUMP M", ",20:39\\)", "JUMP M(X,20:39)"),
+					new InstructionExecuter() {
+						@Override
+						
+						public boolean Execute(Address x) {
+
+							
+							
+							App.getInstance().getBasicRegisters().get("PC").Write(x.getDirection()
+									);
+							x.setBeginning(20);
+							x.setEnding(39);
+							App.getInstance().getBasicRegisters().get("IBR").Write(App.getInstance().getApp_memory().Read(x));
+							return true;
+						}
+					},oneHalfMemoryAddress));
+			
+			
+			
 			instructionSet.add(new Instruction(new Data("F", hexa),
-					new InstructionSyntaxInformation("JUMP+ M", "\\,0:19)", "JUMP M(X,0:19)"),
+					new InstructionSyntaxInformation("JUMP\\+ M", ",0:19\\)", "JUMP M(X,0:19)"),
 					new InstructionExecuter() {
 						@Override
 						
@@ -244,7 +344,7 @@ public class App {
 							App.getInstance().getBasicRegisters().get("IBR").Write(new Data(new Long("0")));}
 							return true;
 						}
-					}));
+					},oneHalfMemoryAddress));
 			
 			instructionSet.add(new Instruction(new Data("12", hexa),
 					new InstructionSyntaxInformation("STOR M", ",8:19\\)", "STOR M(X,8:19)"),
@@ -256,7 +356,7 @@ public class App {
 							App.getInstance().getApp_memory().Write(x, App.getInstance().getBasicRegisters().get("AC").Read(28,39));
 							return true;
 						}
-					}));
+					},oneHalfMemoryAddress));
 			instructionSet.add(new Instruction(new Data("13", hexa),
 					new InstructionSyntaxInformation("STOR M", ",28:39\\)", "STOR M(X,28:39)"),
 					new InstructionExecuter() {
@@ -267,14 +367,14 @@ public class App {
 							App.getInstance().getApp_memory().Write(x, App.getInstance().getBasicRegisters().get("AC").Read(28,39));
 							return true;
 						}
-					}));
+					},oneHalfMemoryAddress));
 			
 	}
 		private App() {
 		m_mframe = new MainFrame();
 		app_memory = new Memory(40, memory_length);
 		setActiveBase(hexa);
-		initializeBasicRegisters();
+
 
 	}
 
@@ -288,7 +388,9 @@ public class App {
 	}
 
 	public void run() {
+		initializeBasicRegisters();
 		initializeInstructionSet();
+		initializeBasicStatements();
 		m_mframe.init();
 		m_mframe.setTitle("IAS Simulator");
 		m_mframe.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -297,10 +399,7 @@ public class App {
 
 	}
 
-	public List<InstructionSyntaxInformation> getInstrucionSyntaxInfoList() {
-		List<InstructionSyntaxInformation> list = new ArrayList<InstructionSyntaxInformation>();
-		return list;
-	}
+
 
 	public MainFrame getM_mframe() {
 		return m_mframe;
@@ -328,9 +427,9 @@ public class App {
 
 	public void setActiveBase(Base activeBase) {
 		memoryAddresWritingWidth = (int) Math.ceil(bus_width
-				/ (Math.log(actual_base) / Math.log(2)));
+				/ (Math.log(activeBase.getBase()) / Math.log(2)));
 		memoryRegisterWritingWidth = (int) Math.ceil(app_memory.getReg_size()
-				/ (Math.log(actual_base) / Math.log(2)));
+				/ (Math.log(activeBase.getBase()) / Math.log(2)));
 		this.activeBase = activeBase;
 
 	}
@@ -339,6 +438,13 @@ public class App {
 		return memoryRegisterWritingWidth;
 	}
 
+	public boolean isPCinitiated() {
+		return isPCinitiated;
+	}
+
+	public void setPCinitiated(boolean isPCinitiated) {
+		this.isPCinitiated = isPCinitiated;
+	}
 	public int getMemoryAddresWritingWidth() {
 		return memoryAddresWritingWidth;
 	}
@@ -346,12 +452,17 @@ public class App {
 	public ArrayList<Instruction> getInstructionSet() {
 		return instructionSet;
 	}
-
+public ArrayList<Statement> getBasicStatements() {
+		return basicStatements;
+	}
 	private static App m_this;
 	private MainFrame m_mframe;
 	private Memory app_memory;
-	private int memory_length = 121;
+	private int memory_length = 150;
 	private ArrayList<Instruction> instructionSet = new ArrayList<Instruction>();
+	private ArrayList<Statement> basicStatements = new ArrayList<Statement>();
+	
+
 	private Map<String, Register> basicRegisters = new HashMap<String, Register>();
 	private int actual_base;
 	private int bus_width = 10;
@@ -383,5 +494,6 @@ public class App {
 				}
 			});
 	private Base activeBase;
-
+	private boolean isPCinitiated=false;
+	
 }

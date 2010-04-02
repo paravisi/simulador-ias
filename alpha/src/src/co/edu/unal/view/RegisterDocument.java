@@ -19,7 +19,7 @@ public class RegisterDocument extends PlainDocument {
 			throws BadLocationException {
 		if (s == null || "".equals(s))
 			return;
-		if (s.matches(App.getInstance().getActiveBase().getRegex()+"*")){
+		if ((s.matches(App.getInstance().getActiveBase().getRegex()+"*"))&&((this.getText(0, this.getLength())+s).matches(App.getInstance().getActiveBase().getRegex()+"{0,"+App.getInstance().getMemoryRegisterWritingWidth()+"}"))){
 			super.insertString(i, s, attributeset);
 		}
 

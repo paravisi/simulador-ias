@@ -18,7 +18,7 @@ public class RegisterView extends JTextField implements
 	private static final long serialVersionUID = 1L;
 
 	public RegisterView(Register model) {
-		super();
+		super(model.getBits_size());
 		owner = model;
 		super.setDocument(new RegisterDocument());
 		addFocusListener(owner);
