@@ -50,7 +50,8 @@ public class App {
 				Data initValue = new Data(arguments[2], App.getInstance()
 						.getActiveBase());
 				App.getInstance().getApp_memory().Write(position, initValue);
-				if (position.getDirection().value()>App.getInstance().getHigherAddressWithData().getDirection().value())
+				if (position.getDirection().value() > App.getInstance()
+						.getHigherAddressWithData().getDirection().value())
 					App.getInstance().setHigherAddressWithData(position);
 			}
 		}, "INIT X VALUE"));
@@ -319,8 +320,8 @@ public class App {
 					public boolean Execute(Address x) {
 
 						App.getInstance().getBasicRegisters().get("AC").Write(
-								new Data(App.getInstance().getApp_memory()
-										.Read(x).value() * (2)), true);
+								new Data(App.getInstance().getBasicRegisters()
+										.get("AC").Read().value() * (2)), true);
 						return true;
 					}
 				}, noMemoryAddress));
@@ -331,8 +332,8 @@ public class App {
 					public boolean Execute(Address x) {
 
 						App.getInstance().getBasicRegisters().get("AC").Write(
-								new Data(App.getInstance().getApp_memory()
-										.Read(x).value() / (2)), true);
+								new Data(App.getInstance().getBasicRegisters()
+										.get("AC").Read().value() / (2)), true);
 						return true;
 					}
 				}, noMemoryAddress));
@@ -533,6 +534,7 @@ public class App {
 	public void setInstructionsTimeDelay(int instructionsTimeDelay) {
 		this.instructionsTimeDelay = instructionsTimeDelay;
 	}
+
 	public Address getHigherAddressWithData() {
 		return higherAddressWithData;
 	}
@@ -580,7 +582,8 @@ public class App {
 			});
 	private Base activeBase;
 	private boolean isPCinitiated = false;
-	private int instructionsTimeDelay = 0;
-	private Address higherAddressWithData= new Address(new Data( new Long(0)),40);
-	
+	private int instructionsTimeDelay = 200;
+	private Address higherAddressWithData = new Address(new Data(new Long(0)),
+			40);
+
 }

@@ -24,9 +24,12 @@ public class Compiler {
 				.getDefaultRootElement();
 		for (int i = 0; i < root.getElementCount(); i++) {
 			int start = root.getElement(i).getStartOffset();
+//			int length = root.getElement(i).getEndOffset()
+//					- root.getElement(i).getStartOffset()
+//					- System.getProperty("line.separator").length();
 			int length = root.getElement(i).getEndOffset()
-					- root.getElement(i).getStartOffset()
-					- System.getProperty("line.separator").length();
+			- root.getElement(i).getStartOffset()
+			-2;
 			try {
 				if (!doc.getText(start, length).isEmpty()) {
 					for (Statement stat : App.getInstance()
@@ -54,9 +57,12 @@ public class Compiler {
 			Instruction firstInstruction=null;
 			for (int i = 0; i < root.getElementCount(); i++) {
 				int start = root.getElement(i).getStartOffset();
+//				int length = root.getElement(i).getEndOffset()
+//						- root.getElement(i).getStartOffset()
+//						- System.getProperty("line.separator").length();
 				int length = root.getElement(i).getEndOffset()
-						- root.getElement(i).getStartOffset()
-						- System.getProperty("line.separator").length();
+				- root.getElement(i).getStartOffset()
+				- 2;
 				try {
 					if (!doc.getText(start, length).isEmpty()) {
 						for (Instruction inst : App.getInstance()

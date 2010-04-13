@@ -38,7 +38,10 @@ public class SyntaxVerifier {
 		ArrayList<Integer> errorLines= new ArrayList<Integer>();
 		for (int i=0; i<root.getElementCount();i++){
 			int start=root.getElement(i).getStartOffset();
-			int length = root.getElement(i).getEndOffset()-root.getElement(i).getStartOffset()- System.getProperty("line.separator").length();
+//			int length = root.getElement(i).getEndOffset()-root.getElement(i).getStartOffset()- System.getProperty("line.separator").length();
+			int length = root.getElement(i).getEndOffset()
+			- root.getElement(i).getStartOffset()
+			- 2;
 			boolean isStatement=false;
 			boolean isInstruction=false;
 			try {
