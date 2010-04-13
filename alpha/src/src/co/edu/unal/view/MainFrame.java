@@ -44,7 +44,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		setDefaultSize();
 		JTextArea code = new JTextArea(100,50);
 		code.setDocument(new CodeDocument(code));
-		
+
 		MemoryView memView= new MemoryView();
 		JScrollPane scrolledMemory = new JScrollPane(memView);
 

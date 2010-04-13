@@ -110,7 +110,11 @@ public class Register implements FocusListener {
 			}
 		} catch (Exception e) {
 			System.out
-					.println("Intentando escribir" + data.value() + " con Write() un número fuera de los límites");
+					.println("Intentando escribir" + data.value() + " con Write() un número fuera de los límites y además isPositive="+data.isPositive());
+			if (g_view!=null){
+			g_view.setText(App.getInstance().getActiveBase().getTransformer()
+					.transformValue(Read(0,getBits_size()-1).value()));
+			}
 		}
 
 	}
