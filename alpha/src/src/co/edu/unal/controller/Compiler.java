@@ -29,7 +29,7 @@ public class Compiler {
 //					- System.getProperty("line.separator").length();
 			int length = root.getElement(i).getEndOffset()
 			- root.getElement(i).getStartOffset()
-			-2;
+			-1;
 			try {
 				if (!doc.getText(start, length).isEmpty()) {
 					for (Statement stat : App.getInstance()
@@ -62,7 +62,7 @@ public class Compiler {
 //						- System.getProperty("line.separator").length();
 				int length = root.getElement(i).getEndOffset()
 				- root.getElement(i).getStartOffset()
-				- 2;
+				- 1;
 				try {
 					if (!doc.getText(start, length).isEmpty()) {
 						for (Instruction inst : App.getInstance()
@@ -89,7 +89,7 @@ public class Compiler {
 						
 					}
 
-				} catch (BadLocationException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -41,7 +41,7 @@ public class SyntaxVerifier {
 //			int length = root.getElement(i).getEndOffset()-root.getElement(i).getStartOffset()- System.getProperty("line.separator").length();
 			int length = root.getElement(i).getEndOffset()
 			- root.getElement(i).getStartOffset()
-			- 2;
+			- 1;
 			boolean isStatement=false;
 			boolean isInstruction=false;
 			try {

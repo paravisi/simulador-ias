@@ -3,26 +3,32 @@ package src.co.edu.unal.view;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
+import src.co.edu.unal.controller.App;
 import src.co.edu.unal.controller.action.CompileAll;
 import src.co.edu.unal.controller.action.ExecuteAll;
 import src.co.edu.unal.controller.action.ExecuteOne;
 import src.co.edu.unal.controller.action.InitMemoryAndRegisters;
 import src.co.edu.unal.controller.action.VerifyDocumentSyntax;
 
-public class MainFrame extends JFrame implements ActionListener {
+public class MainFrame extends JFrame implements AdjustmentListener{
 	private static final long serialVersionUID = 1L;
 
 	public MainFrame() {
@@ -53,18 +59,22 @@ public class MainFrame extends JFrame implements ActionListener {
 		memAndRegs.setDividerLocation(700);
 		
 		JPanel buttons = new JPanel();
+		buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
 		JButton exec = new JButton(new ExecuteAll());
 		JButton execOne = new JButton(new ExecuteOne());
 		JButton syntax = new JButton(new VerifyDocumentSyntax(code));
 		JButton compiler = new JButton(new CompileAll(code));
 		JButton initMem = new JButton(new InitMemoryAndRegisters());
+		JScrollBar instDelay = new JScrollBar(JScrollBar.HORIZONTAL, App.getInstance().getInstructionsTimeDelay(), 2000, 0, 5000);
+		instDelay.addAdjustmentListener(this);
+		
 		
 		buttons.add(initMem);
 		buttons.add(syntax);
 		buttons.add(compiler);
 		buttons.add(execOne);
 		buttons.add(exec);
-		
+		buttons.add(instDelay);
 		
 		
 		code.setBorder(new LineNumberedBorder(LineNumberedBorder.LEFT_JUSTIFY, LineNumberedBorder.RIGHT_SIDE));
@@ -115,9 +125,11 @@ public class MainFrame extends JFrame implements ActionListener {
 	JPanel checkPanel = new JPanel(new GridLayout(0, 1));
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+	public void adjustmentValueChanged(AdjustmentEvent e) {
+		App.getInstance().setInstructionsTimeDelay(e.getValue());
 		
 	}
+
+
 
 }
