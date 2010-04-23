@@ -22,11 +22,11 @@ public class App {
 	public synchronized static App getInstance() {
 		while (m_this == null) {
 			m_this = new App();
-		}
 
+		}
+		
 		return m_this;
 	}
-
 	private void initializeBasicStatements() {
 		basicStatements.add(new Statement(new StatementSyntax() {
 
@@ -188,7 +188,7 @@ public class App {
 										.Read(true), true);
 						return true;
 					}
-				}, oneCompleteMemoryAddres));
+				}, noMemoryAddress));
 		instructionSet
 				.add(new Instruction(new Data("2", hexa),
 						new InstructionSyntaxInformation("LOAD -M", "\\)",
@@ -543,11 +543,11 @@ public class App {
 		this.higherAddressWithData = higherAddressWithData;
 	}
 
-	private static App m_this;
 	private MainFrame m_mframe;
 	private Memory app_memory;
 	private int memory_length = 150;
 	private ArrayList<Instruction> instructionSet = new ArrayList<Instruction>();
+	private static App m_this;
 	private ArrayList<Statement> basicStatements = new ArrayList<Statement>();
 
 	private Map<String, Register> basicRegisters = new HashMap<String, Register>();

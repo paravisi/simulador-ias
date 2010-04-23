@@ -13,6 +13,7 @@ public class Executer {
 		
 	}
 	public static boolean Execute(){ // Devuelve true si se sigue ejecutando, y false si debe parar la ejecución
+		
 		Map <String,Register> BasicReg= App.getInstance().getBasicRegisters();
 		Memory memory = App.getInstance().getApp_memory();
 		Address instructionMemoryAddress;
